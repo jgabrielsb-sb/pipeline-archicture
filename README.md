@@ -20,7 +20,6 @@ Responsibilities of a Pipeline:
 
 The Pipeline does not implement business logic itself — it only controls the execution flow.
 
----
 
 ### 2. Task
 
@@ -37,7 +36,7 @@ Instead:
 
 Thus, the Task provides a **standardized execution interface**, while delegating specific behavior to an injected **business logic class**.
 
----
+
 
 # 📜 Design by Contract
 
@@ -53,7 +52,8 @@ In this architecture:
 
 ✅ **Tasks validate input data and output data** before and after invoking the `run()` method, ensuring that all parties respect the agreed-upon data formats and types.
 
----
+
+
 
 ## 🔥 Why Design by Contract?
 
@@ -64,23 +64,123 @@ In this architecture:
 | **Loose Coupling** | Business logic classes can change freely as long as they respect the contract, without breaking the pipeline or tasks. |
 | **Testability** | Each component can be unit-tested independently, knowing exactly what is expected. |
 
+
+
+
+
+# 🧪 Testing Strategy
+
+This project applies a **layered testing philosophy** to enforce robustness in the core infrastructure while maintaining flexibility for business logic components.
+
 ---
 
-## 📚 Example of the Contract
+## 📚 Testing Rules by Component
 
-A class provided to a Task must:
+| Component | Testing Requirement | Coverage Target |
+|:----------|:---------------------|:----------------|
+| **BasePipeline** (`base_pipeline.py`) | Must be fully unit tested independently | ✅ 100% |
+| **BaseTask** (`base_task.py`) | Must be fully unit tested independently | ✅ 100% |
+| **Tasks Layer** (`tasks/`) | Should have light integration testing if necessary | ➡️ No strict 100% coverage required |
+| **Operations Layer** (`operations/`) | Should be tested according to business criticality | ➡️ No strict 100% coverage required |
 
-- Implement a method `run(input_data)`.
-- Receive validated input data.
-- Return output data matching the expected format.
+---
 
-## 🔥 Example Workflow
+## 🎯 Core Testing Principles
 
-Suppose we have a task called `ExtractDataFromFileTask`:
+✅ **Isolation**:  
+- Pipeline tests **do not depend** on any Tasks or Operations.  
+- Task tests **do not depend** on Pipelines or Operations.  
+- Operations are tested **separately** if needed.
 
-- **Input:** a Pydantic model representing a document (e.g., `DocumentFile`).
-- **Output:** a JSON-like dictionary containing extracted data.
-- **Business Logic:** provided by a class (e.g., `FileExtractor`) passed during initialization.
+✅ **Design by Contract Enforcement**:  
+- BaseTask tests must ensure that the input and output validation mechanisms correctly enforce the expected contract.
+
+✅ **Minimal Mocking Needed**:  
+- Pipeline and Task testing can use simple dummy objects or mocks to simulate task or operation behavior if required.
+
+✅ **Clear Boundaries**:  
+- Business rules (Operations) can change without impacting the stability of the Pipeline and Task core.
+
+
+
+# 🚀 Example
+
+- When testing `BasePipeline`, you can create **dummy tasks** that just pass data along.
+- When testing `BaseTask`, you can create **dummy operation classes** that only return fixed outputs.
+
+✅ This ensures **pure unit tests**, **minimal dependencies**, and **fast, reliable test runs**.
+
+
+
+# 📜 Summary
+
+This testing strategy ensures:
+
+- The **core infrastructure remains stable, safe, and trustworthy**.
+- The **business logic remains flexible and evolvable** without burdening the core with instability.
+- The project remains **highly maintainable** and **scalable** over time.
+
+✅ **100% tested where necessary**, ✅ **pragmatically tested where flexibility is needed**.
+
+
+
+# 🚦 Contribution and Extension Rules
+
+This project is designed with a clear separation of responsibilities between the core execution system (Pipeline and Task layers) and the business logic (Operations layer).
+
+To maintain the system's integrity and stability:
+
+✅ **Users and contributors must NOT modify:**
+- The `BasePipeline` class (located in `base_pipeline.py`).
+- The `BaseTask` class (located in `base_task.py`).
+- Existing task definitions (inside the `tasks/` folder).
+
+These components define the stable foundation of the system and are **critical for maintaining reliability and testability**.
+
+---
+
+✅ **To extend the system properly:**
+
+- If a new type of operation is needed (e.g., a new data extraction, transformation, or validation process):
+  - ➔ **Create a new Operation class** in the `operations/` folder.
+  - ➔ The new class must implement a `run(input_data)` method, respecting the contract expected by Tasks.
+
+- If a fundamentally different kind of Task behavior is needed:
+  - ➔ **Create a new Task class** inside the `tasks/` folder.
+  - ➔ The new Task must inherit from `BaseTask` and respect the existing execution interface (input validation, execution, output validation).
+
+---
+
+✅ **In short:**
+
+| Goal | Correct Action |
+|:----|:---------------|
+| Add new business logic | ➔ Create a new class in `operations/`. |
+| Add new task type | ➔ Create a new class in `tasks/`. |
+| Modify how tasks are orchestrated | ➔ **Not allowed** — `BasePipeline` must remain stable. |
+| Modify how tasks handle execution/validation | ➔ **Not allowed** — `BaseTask` must remain stable. |
+| Modify existing tasks | ➔ **Not allowed** — create a new task if necessary. |
+
+---
+
+# 🎯 Philosophy
+
+The Pipeline and Task structures form the **stable execution engine**.  
+The Operations layer provides the **flexible, evolving business logic**.
+
+This separation ensures:
+- **Maintainability**: Changes in business rules do not break the system foundation.
+- **Extensibility**: New operations and tasks can be added cleanly.
+- **Robustness**: The core system remains reliable and easy to test.
+
+✅ By following these guidelines, we ensure that the system remains **clean, modular, and professionally maintainable**.
+
+---
+
+
+
+
+
 
 
 # 🖼️ Architecture Diagram
@@ -125,13 +225,13 @@ Suppose we have a task called `ExtractDataFromFileTask`:
 <div align="center">
 
 <!-- GitHub Actions CI badge -->
-<a href="https://github.com/YOUR_USERNAME/YOUR_REPO_NAME/actions">
-    <img src="https://github.com/YOUR_USERNAME/YOUR_REPO_NAME/actions/workflows/ci.yml/badge.svg" alt="Build Status">
+<a href="https://github.com/jgabrielsb-sb/pipeline-archicture/actions">
+    <img src="https://github.com/jgabrielsb-sb/pipeline-archicture/actions/workflows/ci.yml/badge.svg" alt="Build Status">
 </a>
 
 <!-- Code coverage badge (optional, requires Codecov setup) -->
-<a href="https://codecov.io/gh/YOUR_USERNAME/YOUR_REPO_NAME">
-  <img src="https://codecov.io/gh/YOUR_USERNAME/YOUR_REPO_NAME/branch/main/graph/badge.svg" alt="Coverage">
+<a href="https://codecov.io/gh/jgabrielsb-sb/pipeline-archicture">
+  <img src="https://codecov.io/gh/jgabrielsb-sb/pipeline-archicture/branch/main/graph/badge.svg" alt="Coverage">
 </a>
 
 <!-- Python version badge -->
