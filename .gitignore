@@ -18,3 +18,7 @@ htmlcov/
 *.swp
 
 logs/
+
+# Coverage
+coverage.xml
+
