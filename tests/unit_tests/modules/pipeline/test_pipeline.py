@@ -22,13 +22,6 @@ from packag.modules.pipeline.task import Task
 
 from packag.modules.pipeline.exceptions import TaskError
 
-class MockTaskWithError(Task, MagicMock):
-    def run(self, input_data=None):
-        raise TaskError(message="Simulated task failure", task_name="MockTask")
-    
-class MockTaskWithResult(Task, MagicMock):
-    def run(self, input_data=None):
-        return "result of the last task"
 
 class TestPipeline:
     
@@ -55,7 +48,9 @@ class TestPipeline:
             
     def test_run_method_raises_a_pipelineerror_if_any_task_raises_a_taskerror(self):
         
-        mock_task = MockTaskWithError()
+        mock_task = MagicMock()
+        
+        mock_task.run.side_effect = TaskError(MagicMock())
         
         class PipelineWithTaskThatRaisesATaskError(Pipeline):
             def get_tasks(self):
@@ -68,7 +63,9 @@ class TestPipeline:
             
     def test_run_method_returns_the_result_of_the_last_task(self):
         
-        mock_task = MockTaskWithResult()
+        #mock_task = MockTaskWithResult()
+        mock_task = MagicMock(Task)
+        mock_task.run.return_value = "result of the last task"
         
         class PipelineWithTwoTasks(Pipeline):
             def get_tasks(self):
@@ -83,7 +80,8 @@ class TestPipeline:
                 
     def test_run_method_returns_the_result_of_the_last_task_when_starting_with_input_data(self):
         
-        mock_task = MockTaskWithResult()
+        mock_task = MagicMock(Task)
+        mock_task.run.return_value = "result of the last task"
         
         class PipelineWithTwoTasksAndInputData(Pipeline):
             def get_tasks(self):
@@ -98,5 +96,19 @@ class TestPipeline:
         pipeline_result = PipelineWithTwoTasksAndInputData().run(input_data='initial data')
         
         assert pipeline_result == 'result of the last task'
+        
+    def test_run_method_raises_a_pipelineerror_if_any_task_raises_a_taskerror(self):
+        
+        mock_task = MagicMock(Task)
+        mock_task.run.side_effect = TaskError(MagicMock())
+        
+        class PipelineWithTaskThatRaisesATaskError(Pipeline):
+            def get_tasks(self):
+                return [
+                    mock_task
+                ]
+            
+        with pytest.raises(PipelineError):
+            PipelineWithTaskThatRaisesATaskError().run()
         
 
