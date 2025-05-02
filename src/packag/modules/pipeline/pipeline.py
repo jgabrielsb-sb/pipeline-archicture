@@ -40,7 +40,7 @@ from packag.modules.pipeline.exceptions import (
     PipelineError,
     TaskError
 )
-pipeline_logger = get_logger('pipeline')
+pipeline_logger = get_logger('pipeline_logger')
 
 class Pipeline(ABC):
     """
