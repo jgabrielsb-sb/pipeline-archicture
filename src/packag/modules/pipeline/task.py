@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 from typing import Any, Type
 
-from packag.modules.pipeline.exceptions import (
+from packag.modules.pipeline.utils.exceptions import (
     TaskError, 
     ValidationError,
     OperationError

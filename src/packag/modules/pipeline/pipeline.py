@@ -36,7 +36,7 @@ from packag.modules.utils import get_logger
 
 from packag.modules.pipeline.task import Task
 
-from packag.modules.pipeline.exceptions import (
+from packag.modules.pipeline.utils.exceptions import (
     PipelineError,
     TaskError
 )
