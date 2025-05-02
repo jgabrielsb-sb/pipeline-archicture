@@ -14,13 +14,13 @@ import pytest
 
 from packag.modules.pipeline import Pipeline
 
-from packag.modules.pipeline.exceptions import PipelineError
+from packag.modules.pipeline.utils.exceptions import PipelineError
 
 from unittest.mock import MagicMock
 
 from packag.modules.pipeline.task import Task
 
-from packag.modules.pipeline.exceptions import TaskError
+from packag.modules.pipeline.utils.exceptions import TaskError
 
 
 class TestPipeline:

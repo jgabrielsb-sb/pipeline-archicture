@@ -3,7 +3,7 @@ from unittest.mock import Mock, MagicMock
 
 from packag.modules.pipeline.operation import Operation
 from packag.modules.pipeline.task import Task
-from packag.modules.pipeline.exceptions import (
+from packag.modules.pipeline.utils.exceptions import (
     ValidationError,
     TaskError, 
     OperationError,
