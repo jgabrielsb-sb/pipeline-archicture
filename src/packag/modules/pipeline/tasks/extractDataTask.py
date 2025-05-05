@@ -2,18 +2,11 @@ from packag.modules.pipeline.task import Task
 
 from ..operation import Operation
 
-from ..utils.exceptions import ValidationError
-
 from packag.models import dtoFile
 
 from typing import Type
 
 import pydantic
-
-if __name__ == "__main__":
-    from packag.models import dtoFile
-    print("dtoFile.File in extractDataTask:", dtoFile.File)
-
 
 class ExtractDataTask(Task):
     """
@@ -21,7 +14,7 @@ class ExtractDataTask(Task):
     
     This task expects to receive a File.File Object as a input;
     Then, it uses the operation class, which has to be a subclass of Operation, to extract the data from the file.
-    The output is a list of dtoData objects.
+    The output is a dtoData object.
     """
     
     def _validate_operation_cls(self, operation_cls: Type[Operation]):
