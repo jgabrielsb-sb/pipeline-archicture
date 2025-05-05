@@ -22,3 +22,8 @@ logs/
 # Coverage
 coverage.xml
 
+
+static/
+
+assets/
+
