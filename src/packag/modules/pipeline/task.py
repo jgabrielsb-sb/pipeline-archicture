@@ -10,7 +10,11 @@ from packag.modules.pipeline.utils.exceptions import (
 from packag.modules.pipeline.operation import Operation
 
 from packag.modules.utils.logger import get_logger
-from packag.modules.utils import ValidationErrorMessages, TaskErrorMessage
+from packag.modules.utils import (
+    ValidationErrorMessage, 
+    TaskErrorMessage
+)
+
 logger = get_logger('task_logger')
 
 """
@@ -75,10 +79,10 @@ class Task(ABC):
             return self._validate_operation_cls(operation_cls)
         except TypeError as e:
             
-            message = ValidationErrorMessages(
+            message = ValidationErrorMessage(
                 function_name='validate_operation_cls',
                 input_name='operation_cls',
-                received_type=type(operation_cls),
+                received_type=str(type(operation_cls)),
             )
             
             logger.error(message.get_message())
@@ -89,10 +93,10 @@ class Task(ABC):
         try:
             return self._validate_input(input_data)
         except TypeError as e:
-            message = ValidationErrorMessages(
+            message = ValidationErrorMessage(
                 function_name='validate_input',
                 input_name='input_data',
-                received_type=type(input_data)
+                received_type=str(type(input_data))
             )
             
             logger.error(message.get_message())
@@ -104,15 +108,15 @@ class Task(ABC):
             result = self._validate_output(output_data)
             return result
         except TypeError as e:
-            message = ValidationErrorMessages(
+            message = ValidationErrorMessage(
                 function_name='validate_output',
                 input_name='output_data',
-                received_type=type(output_data),
+                received_type=str(type(output_data)),
             )
             
             logger.error(message.get_message())
             
-            raise ValidationError(message)
+            raise ValidationError(message=message)
     
     
     def run(self, input_data):
@@ -142,8 +146,5 @@ class Task(ABC):
             
             logger.error(message.get_message())
             
-            raise TaskError(
-                message=message, 
-                original_exception=e
-            ) from e
+            raise TaskError(message=message)
         
