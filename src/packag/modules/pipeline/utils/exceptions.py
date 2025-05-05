@@ -3,11 +3,7 @@ We should think about exceptions as a way to concantenate,
 to compile error logic from units of work.
 """
 
-from packag.modules.utils.messages import (
-    ValidationErrorMessages, 
-    TaskErrorMessage,
-    OperationErrorMessage,
-)
+from packag.modules.utils.messages import *
 
 class PipelineError(Exception):
     """
@@ -16,13 +12,14 @@ class PipelineError(Exception):
     Example message:
         "Error running pipeline MyPipeline: Something went wrong."
     """
-    def __init__(self, message, pipeline_name, original_exception=None):
+    def __init__(self, message: PipelineErrorMessage, original_exception=None):
         self.message = message
-        self.pipeline_name = pipeline_name
         self.original_exception = original_exception
         
-        full_message = f"Error running pipeline '{pipeline_name}': {message}"
-        super().__init__(full_message)
+        if not isinstance(message, PipelineErrorMessage):
+            raise ValueError("message must be an instance of PipelineErrorMessage")
+        
+        super().__init__(message.get_message())
 
 
 class TaskError(Exception):
@@ -35,6 +32,9 @@ class TaskError(Exception):
     def __init__(self, message: TaskErrorMessage, original_exception=None):
         self.message = message
         self.original_exception = original_exception
+        
+        if not isinstance(message, TaskErrorMessage):
+            raise ValueError("message must be an instance of TaskErrorMessage")
         
         super().__init__(message.get_message())
 
@@ -49,6 +49,9 @@ class OperationError(Exception):
     def __init__(self, message: OperationErrorMessage, original_exception=None):
         self.message = message
         self.original_exception = original_exception
+        
+        if not isinstance(message, OperationErrorMessage):
+            raise ValueError("message must be an instance of OperationErrorMessage")
         
         super().__init__(message.get_message())
 
