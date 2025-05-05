@@ -5,6 +5,7 @@ to compile error logic from units of work.
 
 from packag.modules.utils.messages import *
 
+
 class PipelineError(Exception):
     """
     Raised when a pipeline execution fails.
@@ -12,12 +13,12 @@ class PipelineError(Exception):
     Example message:
         "Error running pipeline MyPipeline: Something went wrong."
     """
-    def __init__(self, message: PipelineErrorMessage, original_exception=None):
+    def __init__(self, message: PipelineErrorMessage):
         self.message = message
-        self.original_exception = original_exception
+        
         
         if not isinstance(message, PipelineErrorMessage):
-            raise ValueError("message must be an instance of PipelineErrorMessage")
+            raise TypeError("message must be an instance of PipelineErrorMessage")
         
         super().__init__(message.get_message())
 
@@ -29,12 +30,13 @@ class TaskError(Exception):
     Example message:
         "[Task: MyTask] Something went wrong."
     """
-    def __init__(self, message: TaskErrorMessage, original_exception=None):
+    def __init__(self, message: TaskErrorMessage):
         self.message = message
-        self.original_exception = original_exception
+        
         
         if not isinstance(message, TaskErrorMessage):
-            raise ValueError("message must be an instance of TaskErrorMessage")
+            raise TypeError("message must be an instance of TaskErrorMessage")
+        
         
         super().__init__(message.get_message())
 
@@ -46,12 +48,11 @@ class OperationError(Exception):
     Example message:
         "[Operation: MyOperation] Something went wrong."
     """
-    def __init__(self, message: OperationErrorMessage, original_exception=None):
+    def __init__(self, message: OperationErrorMessage):
         self.message = message
-        self.original_exception = original_exception
         
         if not isinstance(message, OperationErrorMessage):
-            raise ValueError("message must be an instance of OperationErrorMessage")
+            raise TypeError("message must be an instance of OperationErrorMessage")
         
         super().__init__(message.get_message())
 
@@ -63,11 +64,10 @@ class ValidationError(Exception):
     Example message:
         "Error validating 'field_name': must be a positive integer."
     """
-    def __init__(self, message: ValidationErrorMessages):
+    def __init__(self, message: ValidationErrorMessage):
         self.message = message
         
-        if not isinstance(message, ValidationErrorMessages):
-            raise ValueError("message must be an instance of ValidationErrorMessages")
+        if not isinstance(message, ValidationErrorMessage):
+            raise TypeError("message must be an instance of ValidationErrorMessage")
         
-        self.message = message.get_message()
-        super().__init__(self.message)
+        super().__init__(message.get_message())
