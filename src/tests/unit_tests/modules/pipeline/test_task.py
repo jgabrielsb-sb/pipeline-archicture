@@ -220,7 +220,7 @@ class TestTask:
         mock_operation_instance.run.side_effect = OperationError(
             OperationErrorMessage(
                 operation_name='MockOperation',
-                original_exception='TEST ERROR',
+                original_exception=Exception('TEST ERROR'),
             )
         )
         

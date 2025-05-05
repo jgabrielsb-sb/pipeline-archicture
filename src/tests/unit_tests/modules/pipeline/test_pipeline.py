@@ -14,7 +14,10 @@ import pytest
 
 from packag.modules.pipeline import Pipeline
 
-from packag.modules.pipeline.utils.exceptions import PipelineError
+from packag.modules.pipeline.utils.exceptions import (
+    PipelineError,
+    ValidationError
+)
 
 from unittest.mock import MagicMock
 
@@ -22,7 +25,7 @@ from packag.modules.pipeline.task import Task
 
 from packag.modules.pipeline.utils.exceptions import TaskError
 
-
+from packag.modules.utils.messages import TaskErrorMessage
 class TestPipeline:
     
     def test_pipeline_with_non_list_get_tasks_implementation_raises_an_exception(self):
@@ -31,8 +34,8 @@ class TestPipeline:
             def get_tasks(self):
                 return "not a list"
             
-        with pytest.raises(PipelineError):
-            PipelineWithNonListGetTasks()
+        with pytest.raises(ValidationError):
+            PipelineWithNonListGetTasks().validate_tasks()
             
     def test_pipeline_with_a_list_of_non_task_objects_get_tasks_implementation_raises_an_exception(self):
         
@@ -43,14 +46,19 @@ class TestPipeline:
                     "not a task object"
                 ]
             
-        with pytest.raises(PipelineError):
-            PipelineWithNonListOfTaskObjectsGetTasks()
+        with pytest.raises(ValidationError):
+            PipelineWithNonListOfTaskObjectsGetTasks().validate_tasks()
             
-    def test_run_method_raises_a_pipelineerror_if_any_task_raises_a_taskerror(self):
+    def test_run_method_raises_a_pipeline_error_if_any_task_raises_a_task_error(self):
         
-        mock_task = MagicMock()
+        mock_task = MagicMock(Task)
         
-        mock_task.run.side_effect = TaskError(MagicMock())
+        task_error_message = TaskErrorMessage(
+            task_name='MockTask',
+            original_exception=Exception('TEST ERROR')
+        )
+        
+        mock_task.run.side_effect = TaskError(task_error_message)
         
         class PipelineWithTaskThatRaisesATaskError(Pipeline):
             def get_tasks(self):
@@ -97,18 +105,6 @@ class TestPipeline:
         
         assert pipeline_result == 'result of the last task'
         
-    def test_run_method_raises_a_pipelineerror_if_any_task_raises_a_taskerror(self):
-        
-        mock_task = MagicMock(Task)
-        mock_task.run.side_effect = TaskError(MagicMock())
-        
-        class PipelineWithTaskThatRaisesATaskError(Pipeline):
-            def get_tasks(self):
-                return [
-                    mock_task
-                ]
-            
-        with pytest.raises(PipelineError):
-            PipelineWithTaskThatRaisesATaskError().run()
+    
         
 
