@@ -34,11 +34,17 @@ from abc import ABC, abstractmethod
 
 from packag.modules.utils import get_logger
 
+from packag.modules.utils import (
+    PipelineErrorMessage,
+    ValidationErrorMessage
+)
+
 from packag.modules.pipeline.task import Task
 
 from packag.modules.pipeline.utils.exceptions import (
     PipelineError,
-    TaskError
+    TaskError,
+    ValidationError
 )
 pipeline_logger = get_logger('pipeline_logger')
 
@@ -48,21 +54,37 @@ class Pipeline(ABC):
     """
     
     def __init__(self):
-        tasks = self.get_tasks()
+        self.tasks = self.get_tasks()
+        
+    def validate_tasks(self):
+        # validates the tasks are a list of Task objects
+        if not isinstance(self.tasks, list):
+            message = ValidationErrorMessage(
+                function_name='get_tasks',
+                input_name='tasks',
+                received_type=str(type(self.tasks)),
+                expected_type=str(list)
+            )
+            
+            pipeline_logger.error(message.get_message())
+            
+            raise ValidationError(message=message)
         
         # validates the tasks are a list of Task objects
-        if not isinstance(tasks, list):
-            message = 'Tasks must be a list of Task objects. Please implement the get_tasks method correctly.'
-            pipeline_logger.error(message)
-            raise PipelineError(message=message, pipeline_name=self.__class__.__name__)
+        if not all(isinstance(task, Task) for task in self.tasks):
+            message = ValidationErrorMessage(
+                function_name='get_tasks',
+                input_name='tasks',
+                received_type=str(type(self.tasks)),
+                expected_type='list of Task'
+            )
+            
+            pipeline_logger.error(message.get_message())
+            
+            raise ValidationError(message=message)
         
-        # validates the tasks are a list of Task objects
-        if not all(isinstance(task, Task) for task in tasks):
-            message = 'Tasks must be a list of Task objects. Please implement the get_tasks method correctly.'
-            pipeline_logger.error(message)
-            raise PipelineError(message=message, pipeline_name=self.__class__.__name__)
+        return self.tasks
         
-        self.tasks = tasks
     
     @abstractmethod
     def get_tasks(self): # pragma: no cover
@@ -79,7 +101,7 @@ class Pipeline(ABC):
         """
         pipeline_logger.info(f'Running pipeline: {self.__class__.__name__}')
         
-        tasks = self.get_tasks()
+        tasks = self.validate_tasks()
         
         previous_task_result = input_data
         
@@ -88,9 +110,15 @@ class Pipeline(ABC):
                 previous_task_result = task.run(previous_task_result)
                 
             pipeline_logger.info(f'Pipeline: {self.__class__.__name__} completed successfully')
-        except TaskError as e:
-            pipeline_logger.error(f'Error on pipeline: {e}')
-            raise PipelineError(message=e.message, pipeline_name=self.__class__.__name__, original_exception=e)
+        except (TaskError, ValidationError) as e:
+            error = PipelineErrorMessage(
+                pipeline_name=self.__class__.__name__,
+                original_exception=e
+            )
+            
+            pipeline_logger.error(error.get_message())
+            
+            raise PipelineError(message=error)
             
         return previous_task_result
             
