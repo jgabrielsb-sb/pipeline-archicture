@@ -1,4 +1,15 @@
 from .logger import get_logger
-from .messages import ValidationErrorMessages, TaskErrorMessage
+from .messages import (
+    PipelineErrorMessage, 
+    TaskErrorMessage, 
+    OperationErrorMessage, 
+    ValidationErrorMessages
+)
 
-__all__ = ['get_logger', 'ValidationErrorMessages', 'TaskErrorMessage']
+__all__ = [
+    'get_logger', 
+    'PipelineErrorMessage', 
+    'TaskErrorMessage', 
+    'OperationErrorMessage', 
+    'ValidationErrorMessages'
+    ]
