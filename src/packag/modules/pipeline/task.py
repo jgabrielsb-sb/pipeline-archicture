@@ -102,7 +102,6 @@ class Task(ABC):
     def validate_output(self, output_data):
         try:
             result = self._validate_output(output_data)
-            print('ola')
             return result
         except TypeError as e:
             message = ValidationErrorMessages(
