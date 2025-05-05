@@ -38,6 +38,7 @@ class TestExtractDataTask:
         
     ###### TEST IF _VALIDATE_INPUT RETURN THE INPUT WHEN IT IS A DTO FILE ######
     def Atest_if_private_validate_input_return_the_input_when_it_is_a_dto_file_and_is_none(self):
+        input_data = None
         assert ExtractDataTask(operation_cls=None)._validate_input(input_data=input_data) == input_data
 
     ###### TEST IF _VALIDATE_OUTPUT RAISE TYPE ERROR WHEN OUTPUT IS NOT A Pydantic Base Model ######
