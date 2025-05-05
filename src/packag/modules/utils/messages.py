@@ -1,12 +1,18 @@
 class ValidationErrorMessages:
-    def __init__(self, function_name, input_name, received_type):
+    def __init__(self, function_name, input_name, received_type, expected_type=None):
         self.function_name = function_name
         self.input_name = input_name
         self.received_type = received_type
+        self.expected_type = expected_type
         
     def get_message(self):
-        return f""" Error validating {self.input_name} on function {self.function_name} - the received type is not allowed: {self.received_type} 
-        """
+        if self.expected_type:
+            return f""" Error validating {self.input_name} on function {self.function_name} - the received type is not allowed: {self.received_type} 
+            Expected type: {self.expected_type}
+            """
+        else:
+            return f""" Error validating {self.input_name} on function {self.function_name} - the received type is not allowed: {self.received_type} 
+            """
         
 class TaskErrorMessage:
     def __init__(self, task_name, original_exception):
