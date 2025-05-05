@@ -16,10 +16,6 @@ from packag.models import dtoFile
 
 from pathlib import Path
 
-
-
-
-
 class TestExtractDataTask:
     ###### TEST IF _VALIDATE_OPERATION_CLS RAISE TYPE ERROR WHEN OPERATION_CLS IS NOT AN OPERATION ######
     def test_if_private_validate_operation_cls_raise_type_error_when_operation_cls_is_not_a_operation(self):
@@ -34,11 +30,39 @@ class TestExtractDataTask:
     def test_if_private_validate_input_raise_type_error_when_input_is_not_a_dto_file(self):
         with pytest.raises(TypeError):
             ExtractDataTask(operation_cls=None)._validate_input(input_data=None)
+        
+    ###### TEST IF _VALIDATE_INPUT RETURN THE INPUT WHEN IT IS A DTO FILE ######
+    def test_if_private_validate_input_raise_type_error_when_it_is_not_a_dto_file_and_is_not_none(self):
+        with pytest.raises(TypeError):
+            ExtractDataTask(operation_cls=None)._validate_input(input_data=str)
+        
+    ###### TEST IF _VALIDATE_INPUT RETURN THE INPUT WHEN IT IS A DTO FILE ######
+    def Atest_if_private_validate_input_return_the_input_when_it_is_a_dto_file_and_is_none(self):
+        assert ExtractDataTask(operation_cls=None)._validate_input(input_data=input_data) == input_data
 
     ###### TEST IF _VALIDATE_OUTPUT RAISE TYPE ERROR WHEN OUTPUT IS NOT A Pydantic Base Model ######
     def test_if_private_validate_output_raise_type_error_when_output_is_not_a_pydantic_base_model(self):
         with pytest.raises(TypeError):
             ExtractDataTask(operation_cls=None)._validate_output(output_data=None)
+            
+    def test_if_private_validate_output_raise_type_error_when_output_is_not_a_pydantic_base_model_and_is_not_none(self):
+        with pytest.raises(TypeError):
+            ExtractDataTask(operation_cls=None)._validate_output(output_data=str)
+            
+    ###### TEST IF _VALIDATE_OPERATION_CLS RAISE TYPE ERROR WHEN OPERATION_CLS IS NOT A SUBCLASS OF OPERATION ######
+    def test_if_private_validate_operation_cls_raise_type_error_when_operation_cls_is_not_a_subclass_of_operation(self):
+        with pytest.raises(TypeError):
+            operation = str
+            ExtractDataTask(operation_cls=operation)._validate_operation_cls(operation_cls=operation)
+            
+    ###### TEST IF VALIDATE_OPERATION_CLS RETURN THE OPERATION WHEN IT IS VALID ######
+    def Atest_if_validate_operation_cls_return_the_operation_when_it_is_valid(self):
+        class OperationTest(Operation):
+            def run(self, input_data=None):
+                return None
+            
+        operation = OperationTest()
+        assert ExtractDataTask(operation_cls=operation).validate_operation_cls(operation_cls=operation) == operation
             
     ###### TEST IF VALIDATE_OPERATION_CLS RAISE VALIDATION ERROR WHEN OPERATION_CLS IS NOT A SUBCLASS OF OPERATION ######
     def test_if_validate_operation_cls_raise_validation_error_when_operation_cls_is_not_a_subclass_of_operation(self):
