@@ -3,7 +3,7 @@ from .messages import (
     PipelineErrorMessage, 
     TaskErrorMessage, 
     OperationErrorMessage, 
-    ValidationErrorMessages
+    ValidationErrorMessage
 )
 
 __all__ = [
@@ -11,5 +11,5 @@ __all__ = [
     'PipelineErrorMessage', 
     'TaskErrorMessage', 
     'OperationErrorMessage', 
-    'ValidationErrorMessages'
+    'ValidationErrorMessage'
     ]
