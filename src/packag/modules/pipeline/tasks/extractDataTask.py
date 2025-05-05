@@ -27,19 +27,12 @@ class ExtractDataTask(Task):
         return operation_cls
     
     def _validate_input(self, input_data: dtoFile.File):
-        if not isinstance(input_data, type):
-            raise TypeError(f"Expected a File type, got {type(input_data)} instead")
-        
         if not isinstance(input_data, dtoFile.File):
-            raise TypeError(f"Expected a File object, got {type(input_data)} instead")
-        
+            raise TypeError(f"Expected a {type(dtoFile.File)} type, got {type(input_data)} instead")
         return input_data
     
-    def _validate_output(self, output_data: Type[pydantic.BaseModel]):
-        if not isinstance(output_data, type):
-            raise TypeError(f"Expected a pydantic.BaseModel type, got {type(output_data)} instead")
-        
-        if not issubclass(output_data, pydantic.BaseModel):
+    def _validate_output(self, output_data: pydantic.BaseModel):
+        if not isinstance(output_data, pydantic.BaseModel):
             raise TypeError(f"Expected a pydantic.BaseModel type, got {type(output_data)} instead")
         
         return output_data
