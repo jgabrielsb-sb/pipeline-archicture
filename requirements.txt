@@ -2,3 +2,5 @@
 pytest
 pytest-cov
 python-dotenv
+pdfplumber
+reportlab
