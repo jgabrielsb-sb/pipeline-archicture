@@ -10,8 +10,9 @@ class FileExtensionEnum(str, Enum):
     XLSX = "xlsx"
     XLS = "xls"
     CSV = "csv"
+    XML = "xml"
 
-class BaseFile(BaseModel):
+class File(BaseModel):
     """
     This is the base class for all files.
     It is used to validate the file path and the file extension.
