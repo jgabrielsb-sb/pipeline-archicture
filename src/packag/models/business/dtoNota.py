@@ -1,10 +1,16 @@
 from pydantic import (
     BaseModel,
-    ConfigDict
+    model_validator
 )
 from typing import Optional
 
-import datetime
+from datetime import date
+
+from .enum import (
+    EstadoEnum,
+    MunicipioEnum
+)
+
 
 class NotaExtractedInfo(BaseModel):
     
@@ -39,6 +45,63 @@ class NotaExtractedInfo(BaseModel):
     
     atv_economica: str
     municipio: str
+    
+class NotaFormattedInfo(BaseModel):
+    
+    numero_nfs: int
+    codigo_autenticidade: str
+    
+    data_competencia: date
+    
+    valor_liquido: float
+    valor_total: float 
+    valor_deducoes: float 
+    valor_pis: float
+    valor_cofins: float
+    valor_inss: float
+    valor_irrf: float
+    valor_csll: float
+    valor_issqn: float
+    base_calculo: float
+    aliquota: float
+    issqn_a_reter: float
+    
+    estado: EstadoEnum
+    
+    codigo_tributacao: str 
+    discriminacao_servico: str
+    opt_simples_nacional: int
+    
+    serie: Optional[str] = None    
+    nfse_substituida: Optional[str] = None 
+    valor_outras_retencoes: Optional[float] = None
+    data_emissao: Optional[date] = None
+    
+    atv_economica: str
+    atv_economica_normalized: str
+    municipio: MunicipioEnum
+    
+    @model_validator(mode='after')   # must have only numbers in the following fields: cnpj, cpf, inscricao_municipal, cep, telefone
+    def only_numbers(cls, values):
+        only_numbers_fields = [
+            'codigo_tributacao',
+            'atv_economica_normalized'
+        ]
+        data_as_dict = values.model_dump()
+        fields_that_doesnt_passed_the_condition = []
+        
+        for field in only_numbers_fields:
+            for char in data_as_dict[field]:
+                if not char.isdigit():
+                    fields_that_doesnt_passed_the_condition.append(field)
+                    break
+    
+        if fields_that_doesnt_passed_the_condition:
+            raise ValueError(f"The following fields must contain only numbers: {fields_that_doesnt_passed_the_condition}")
+        
+        return values
+    
+    
     
     
     
