@@ -2,7 +2,7 @@ import unicodedata
 
 from packag.modules.utils.decorators import log_execution
 
-from packag.modules.    utils.logger import get_logger
+from packag.modules.utils.logger import get_logger
 
 string_operation_logger = get_logger('utils')
 
