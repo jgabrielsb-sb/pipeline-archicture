@@ -56,7 +56,33 @@ def test_if_validation_error_is_created():
             )
         )
     
-
+#### TEST IF EXTRACT METHOD ERROR RAISES VALIDATION ERROR WHEN MESSAGE IS NOT A INSTANCE OF EXTRACT METHOD ERROR MESSAGE ######
+def test_if_extract_method_error_raises_validation_error_when_message_is_not_a_instance_of_extract_method_error_message():
+    with pytest.raises(TypeError):
+        ExtractMethodError(message='message')
+        
+def test_if_extract_method_error_is_created():
+    extract_method_error = ExtractMethodError(
+        message=ExtractMethodErrorMessage(
+            method_name='method_name', 
+            original_exception=Exception('original_exception')
+            )
+        )
+    
+###### TEST IF GET ALL EXTRACTED INFO ERROR RAISES TYPE ERROR IF MESSAGE IS NOT A GETALLEXTRACTEDINFOERRORMESSAGE ######
+def test_if_get_all_extracted_info_error_raises_type_error_if_message_is_not_a_get_all_extracted_info_error_message():
+    with pytest.raises(TypeError):
+        GetAllExtractedInfoError(message='message')
+        
+def test_if_get_all_extracted_info_error_is_created():
+    get_all_extracted_info_error = GetAllExtractedInfoError(
+        message=GetAllExtractedInfoErrorMessage(
+            exceptions=[ExtractMethodErrorMessage(
+                method_name='method_name', 
+                original_exception=Exception('original_exception')
+            )]
+        )
+    )
         
         
         

@@ -25,7 +25,7 @@ from packag.modules.pipeline.task import Task
 
 from packag.modules.pipeline.utils.exceptions import TaskError
 
-from packag.modules.utils.messages import TaskErrorMessage
+from packag.modules.pipeline.utils.messages import TaskErrorMessage
 class TestPipeline:
     
     def test_pipeline_with_non_list_get_tasks_implementation_raises_an_exception(self):

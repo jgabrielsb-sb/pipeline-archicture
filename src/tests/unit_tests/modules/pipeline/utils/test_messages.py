@@ -1,6 +1,10 @@
-from packag.modules.utils.messages import *
+from packag.modules.pipeline.utils.messages import *
 
 import pytest
+
+def normalize_string(s: str) -> str:
+    return '\n'.join(line.rstrip() for line in s.strip().splitlines())
+
 
 ###### TEST IF PIPELINE ERROR MESSAGE RETURNS THE CORRECT MESSAGE ######
 def test_if_pipeline_error_message_returns_the_correct_message():
@@ -150,8 +154,88 @@ def test_if_validation_error_message_raises_value_error_when_expected_type_is_no
     assert validation_error_message.get_message() == f""" Error validating input_name on function function_name - the received type is not allowed: int 
             """
 
+###### TEST IF EXTRACT METHOD ERROR MESSAGE RETURNS THE CORRECT MESSAGE ######
+def test_if_extract_method_error_message_returns_the_correct_message():
+    extract_method_error_message = ExtractMethodErrorMessage(
+        method_name='method_name', 
+        original_exception=Exception('original_exception')
+    )
+    assert extract_method_error_message.get_message() == f"Error on extract method method_name -\noriginal_exception"
 
+###### TEST IF EXTRACT METHOD ERROR MESSAGE RAISES VALUE ERROR WHEN METHOD NAME IS NOT A STRING ######
+def test_if_extract_method_error_message_raises_value_error_when_method_name_is_not_a_string():
+    with pytest.raises(ValueError):
+        ExtractMethodErrorMessage(
+            method_name=1, 
+            original_exception=Exception('original_exception')
+        )
 
+###### TEST IF EXTRACT METHOD ERROR MESSAGE RAISES VALUE ERROR WHEN ORIGINAL EXCEPTION IS NOT A INSTANCE OF EXCEPTION ######
+def test_if_extract_method_error_message_raises_value_error_when_original_exception_is_not_a_instance_of_exception():
+    with pytest.raises(ValueError):
+        ExtractMethodErrorMessage(
+            method_name='method_name', 
+            original_exception=1
+        )
+        
+###### TEST IF GET ALL EXTRACTED INFO ERROR MESSAGE RAISES VALUE ERROR WHEN EXCEPTIONS IS NOT A LIST ######
+def test_if_get_all_extracted_info_error_message_raises_value_error_when_exceptions_is_not_a_list():
+    with pytest.raises(ValueError):
+        GetAllExtractedInfoErrorMessage(
+            exceptions=1
+        )
+        
+###### TEST IF GET ALL EXTRACTED INFO ERROR MESSAGE RAISES VALUE ERROR WHEN EXCEPTIONS IS NOT A LIST OF EXCEPTIONS ######
+def test_if_get_all_extracted_info_error_message_raises_value_error_when_exceptions_is_not_a_list_of_exceptions():
+    with pytest.raises(ValueError):
+        GetAllExtractedInfoErrorMessage(
+            exceptions=[1]
+        )
+        
+        
+        
+###### TEST IF GET ALL EXTRACTED INFO ERROR MESSAGE RETURNS THE CORRECT MESSAGE ######
+def test_if_get_all_extracted_info_error_message_returns_the_correct_message():
+    get_all_extracted_info_error_message = GetAllExtractedInfoErrorMessage(
+        exceptions=[ExtractMethodErrorMessage(
+            method_name='method_name', 
+            original_exception=Exception('original_exception')
+        )]
+    )
+    
+    expected_message = f"Error on the following extracting methods:\nError on extract method method_name -\noriginal_exception"
+        
+    message = get_all_extracted_info_error_message.get_message()
+        
+    normalized_expected_message = normalize_string(expected_message)
+    normalized_result = normalize_string(message)
+    
+    assert normalized_result == normalized_expected_message
+    
+def test_if_get_all_extracted_info_error_message_returns_the_correct_message_with_more_than_one_exception():
+    get_all_extracted_info_error_message = GetAllExtractedInfoErrorMessage(
+        exceptions=[
+            ExtractMethodErrorMessage(
+                method_name='method_name', 
+                original_exception=Exception('original_exception')
+            ),
+            ExtractMethodErrorMessage(
+                method_name='method_name_2', 
+                original_exception=Exception('original_exception_2')
+            )
+        ]
+    )
+    
+    expected_message = f"Error on the following extracting methods:\nError on extract method method_name -\noriginal_exception\nError on extract method method_name_2 -\noriginal_exception_2"
+        
+    message = get_all_extracted_info_error_message.get_message()
+        
+    normalized_expected_message = normalize_string(expected_message)
+    normalized_result = normalize_string(message)
+   
+    assert normalized_result == normalized_expected_message
+    
+    
 
 
 
