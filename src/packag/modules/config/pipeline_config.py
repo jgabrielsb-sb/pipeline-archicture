@@ -42,6 +42,12 @@ LOGGING_CONFIG = {
             'backupCount': 5,
             'level': 'DEBUG',
         },
+        'utils_file': {
+            'class': 'logging.handlers.RotatingFileHandler',
+            'formatter': 'standard',
+            'filename': os.path.join(LOG_DIR, 'utils.log'),
+            'maxBytes': 5_000_000,
+        },
     },
     'loggers': {
         'pipeline': {
@@ -56,6 +62,11 @@ LOGGING_CONFIG = {
         },
         'operations': {
             'handlers': ['console', 'operations_file'],
+            'level': 'DEBUG',
+            'propagate': False,
+        },
+        'utils': {
+            'handlers': ['console', 'utils_file'],
             'level': 'DEBUG',
             'propagate': False,
         },
