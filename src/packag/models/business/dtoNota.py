@@ -39,6 +39,11 @@ class NotaExtractedInfo(BaseModel):
     
     atv_economica: str
     municipio: str
+    
+    
+    
+    
+    
 
 
     
