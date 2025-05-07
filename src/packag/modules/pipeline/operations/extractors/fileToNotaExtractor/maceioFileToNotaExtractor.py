@@ -1,4 +1,4 @@
-from packag.modules.pipeline.operations.extractors.fileToNotaExtractor import FileToNotaExtractor
+from .fileToNotaExtractor import FileToNotaExtractor
 import xml.etree.ElementTree as ET
 
 from packag.models.dtoFile import File
@@ -11,18 +11,10 @@ class MaceioFileToNotaExtractor(FileToNotaExtractor):
     def __init__(self, file: Type[File]):
         self.file = file
         self.xml_content = file.file_path.read_text()
-        self.ns = {
-            'ns2': 'http://www.giss.com.br/tipos-v2_04.xsd',
-            'ns3': 'http://www.w3.org/2000/09/xmldsig#'
-        }
-        if self.xml_content:
-            self.root = ET.fromstring(self.xml_content)
-        else:
-            self.root = None
+        self.ns = {'ns2': 'http://www.giss.com.br/tipos-v2_04.xsd',}
+        self.root = ET.fromstring(self.xml_content)
 
     def _find(self, path):
-        if self.root is None:
-            return None
         el = self.root.find(path, self.ns)
         return el.text if el is not None else None
 
@@ -102,13 +94,7 @@ class MaceioFileToNotaExtractor(FileToNotaExtractor):
     def _extract_municipio(self):
         return self._find('.//ns2:InfNfse/ns2:PrestadorServico/ns2:Endereco/ns2:CodigoMunicipio')
 
-if __name__ == '__main__':
-    dtoFile = File(
-        file_path=Path('static/notas_fiscais/maceio/342.xml'),
-        file_extension='xml'
-    )
-    maceio_file_to_nota_extractor = MaceioFileToNotaExtractor(dtoFile)
-    print(maceio_file_to_nota_extractor.run(dtoFile))
+
     
     
     

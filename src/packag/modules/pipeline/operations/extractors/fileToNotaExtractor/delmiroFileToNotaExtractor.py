@@ -13,17 +13,10 @@ class DelmiroFileToNotaExtractor(FileToNotaExtractor):
     def __init__(self, file: Type[File]):
         self.file = file
         self.xml_content = file.file_path.read_text()
-        self.ns = {
-            '': 'http://www.agili.com.br/nfse_v_1.00.xsd'
-        }
-        if self.xml_content:
-            self.root = ET.fromstring(self.xml_content)
-        else:
-            self.root = None
+        self.ns = {'': 'http://www.agili.com.br/nfse_v_1.00.xsd'}
+        self.root = ET.fromstring(self.xml_content)
 
     def _find(self, path):
-        if self.root is None:
-            return None
         el = self.root.find(path, self.ns)
         return el.text if el is not None else None
 
@@ -106,13 +99,6 @@ class DelmiroFileToNotaExtractor(FileToNotaExtractor):
         return self._find('.//IdentificacaoOrgaoGerador/Municipio/CodigoMunicipioIBGE')
 
 
-if __name__ == '__main__':
-    dtoFile = File(
-        file_path=Path('static/notas_fiscais/delmiro/NFSe - 1779(1).xml'),
-        file_extension='xml'
-    )
-    delmiro_file_to_nota_extractor = DelmiroFileToNotaExtractor(dtoFile)
-    print(delmiro_file_to_nota_extractor.run(dtoFile))
     
     
     

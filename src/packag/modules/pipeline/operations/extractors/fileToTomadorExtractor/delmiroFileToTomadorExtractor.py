@@ -1,8 +1,14 @@
 from pathlib import Path
 import re
 import xml.etree.ElementTree as ET
-from packag.modules.pipeline.operations.extractors.fileToTomadorExtractor import FileToTomadorExtractor
-from packag.modules.pipeline.utils.exceptions import OperationError
+from packag.modules.pipeline.operations.extractors.fileToTomadorExtractor.fileToTomadorExtractor import FileToTomadorExtractor
+from packag.modules.pipeline.utils.exceptions import (
+    ExtractMethodError,
+)
+
+from packag.modules.pipeline.utils.messages import (
+    ExtractMethodErrorMessage
+)
 from packag.modules.utils.logger import get_logger
 from packag.models.dtoFile import File
 from typing import Type
@@ -12,33 +18,55 @@ logger = get_logger('operations')
 class DelmiroFileToTomadorExtractor(FileToTomadorExtractor):
     def __init__(self, file: Type[File]):
         self.file = file
-        
         self.file_path = file.file_path
-        self.root = self.extract_data()
-        self.xml_content = self.extract_data()
-        
-        self.namespaces = {'ns': 'http://www.agili.com.br/nfse_v_1.00.xsd'}
     
+        self.namespaces = {'ns': 'http://www.agili.com.br/nfse_v_1.00.xsd'}
+
+        self.xml_content = None
     def extract_data(self):
         try:
-            tree = ET.parse(self.file_path)
-            return tree.getroot()
-        except Exception as e:
-            logger.error(f"Error parsing XML: {e}")
-            raise OperationError(...)
+            if self.file.file_extension.lower() != 'xml':
+                raise ValueError("Invalid file type for XML extractor")
+            
+            with open(self.file_path, 'r', encoding='utf-8') as file:
+                return file.read()
+            
+        except (
+            FileNotFoundError,
+            PermissionError,
+            ValueError,
+            UnicodeDecodeError  # <- aqui é onde entra o erro real
+        ) as e:
+            message = ExtractMethodErrorMessage(
+                method_name='extract_data',
+                original_exception=e
+            )
+            logger.error(message.get_message())
+            
+            raise ExtractMethodError(message)
 
     def _find(self, xpath):
         try:
-            element = self.root.find(xpath, self.namespaces)
+            if self.xml_content is None:
+                self.xml_content = self.extract_data()
+                
+            root = ET.fromstring(self.xml_content)
+            if xpath.startswith('//'):
+                xpath = '.' + xpath[1:]
+            element = root.find(xpath, self.namespaces)
             return element.text if element is not None else None
         except Exception as e:
-            logger.error(f"Error finding element with xpath {xpath}: {e}")
-            return None
+            message = ExtractMethodErrorMessage(
+                method_name='_find',
+                original_exception=e
+            )
+            
+            logger.error(message.get_message())
+            
+            raise ExtractMethodError(message)
 
     def _extract_cpf(self):
-        cpf = self._find('.//ns:DeclaracaoPrestacaoServico/ns:DadosTomador/ns:IdentificacaoTomador/ns:CpfCnpj/ns:Cpf')
-        print(f"[DEBUG] CPF: {cpf}")
-        return self._find('.//ns:DeclaracaoPrestacaoServico/ns:DadosTomador/ns:IdentificacaoTomador/ns:CpfCnpj/ns:Cpf')
+        return self._find('.//ns:DeclaracaoPrestacaoServico/ns:DadosTomador/ns:IdentificacaoTomador/ns:CpfCnpj/ns:Cpf') 
     
     def _extract_cnpj(self):
         return self._find('.//ns:DeclaracaoPrestacaoServico/ns:DadosTomador/ns:IdentificacaoTomador/ns:CpfCnpj/ns:Cnpj')
@@ -78,15 +106,7 @@ class DelmiroFileToTomadorExtractor(FileToTomadorExtractor):
         return self._find('.//ns:DeclaracaoPrestacaoServico/ns:DadosTomador/ns:Contato/ns:Telefone')
     
     def _extract_email(self):
-        return self._find('.//ns:DeclaracaoPrestacaoServico/ns:DadosTomador/ns:Contato/ns:Email')
+        return None
 
-
-if __name__ == "__main__":
-    dtoFile = File(
-        file_path=Path('static/notas_fiscais/delmiro/NFSe - 150.xml'),
-        file_extension='xml'
-    )
-    extractor = DelmiroFileToTomadorExtractor(dtoFile)
-    print(extractor.get_all_extracted_info())
     
     

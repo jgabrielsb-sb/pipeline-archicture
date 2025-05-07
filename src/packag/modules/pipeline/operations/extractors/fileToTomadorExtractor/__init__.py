@@ -1,0 +1,1 @@
+from .fileToTomadorExtractor import FileToTomadorExtractor
