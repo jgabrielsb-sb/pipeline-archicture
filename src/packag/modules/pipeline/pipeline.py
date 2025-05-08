@@ -33,8 +33,7 @@ pipeline.run()
 from abc import ABC, abstractmethod
 
 from packag.modules.utils import get_logger
-
-from packag.modules.utils import (
+from packag.modules.utils.common_messages import (
     PipelineErrorMessage,
     ValidationErrorMessage
 )
