@@ -7,7 +7,9 @@ from packag.modules.string_operations import (
     get_formatted_cpf,
     safe_float,
     safe_int,
-    safe_str
+    safe_str,
+    remove_leading_zeros,
+    get_only_numbers
 )
 
 ######## REMOVE_ALL_ACCENTS TESTS ########
@@ -186,7 +188,99 @@ def test_safe_str_with_exotic_class_that_does_not_support_string_conversion():
     
     assert safe_str(BadStr()) == None
     
+######## REMOVE_LEADING_ZEROS TESTS ########
+
+def test_string_with_leading_zeros():
+    """Test if a string with leading zeros has them removed."""
+    input_str = "00000120"
+    expected = "120"
+    assert remove_leading_zeros(input_str) == expected
+
+def test_string_without_leading_zeros():
+    """Test if a string without leading zeros remains the same."""
+    input_str = "120"
+    expected = "120"
+    assert remove_leading_zeros(input_str) == expected
+
+def test_string_with_leading_zeros_and_zeros_in_middle():
+    """Test if only leading zeros are removed."""
+    input_str = "0101000001"
+    expected = "101000001"
+    assert remove_leading_zeros(input_str) == expected
+
+def test_string_with_all_zeros():
+    """Test if a string with all zeros returns a single zero."""
+    input_str = "0000"
+    expected = "0"
+    assert remove_leading_zeros(input_str) == expected
+
+def test_string_with_leading_zeros_and_letters():
+    """Test if leading zeros are removed from a string with letters."""
+    input_str = "000ABC"
+    expected = "ABC"
+    assert remove_leading_zeros(input_str) == expected
+
+def test_empty_string():
+    """Test if an empty string returns an empty string."""
+    input_str = ""
+    expected = ""
+    assert remove_leading_zeros(input_str) == expected
+
+def test_invalid_input_type_leading_zeros():
+    """Test if TypeError is raised for non-string input."""
+    with pytest.raises(TypeError):
+        remove_leading_zeros(12345)
     
+######## GET_ONLY_NUMBERS TESTS ########
+
+def test_get_only_numbers_with_leading_zeros():
+    """Test if a string with leading zeros maintains them."""
+    input_str = "00000120"
+    expected = "00000120"
+    assert get_only_numbers(input_str) == expected
+
+def test_get_only_numbers_with_special_characters():
+    """Test if special characters are removed while keeping numbers."""
+    input_str = "083.254.754-98"
+    expected = "08325475498"
+    assert get_only_numbers(input_str) == expected
+
+def test_get_only_numbers_with_currency():
+    """Test if currency symbols and commas are removed while keeping numbers."""
+    input_str = "R$120,00"
+    expected = "12000"
+    assert get_only_numbers(input_str) == expected
+
+def test_get_only_numbers_with_text():
+    """Test if text is removed while keeping numbers."""
+    input_str = "HEY JUDE LOOK AT ME: 120"
+    expected = "120"
+    assert get_only_numbers(input_str) == expected
+
+def test_get_only_numbers_with_empty_string():
+    """Test if an empty string returns an empty string."""
+    input_str = ""
+    expected = ""
+    assert get_only_numbers(input_str) == expected
+
+def test_get_only_numbers_with_no_numbers():
+    """Test if a string with no numbers returns an empty string."""
+    input_str = "No numbers here!"
+    expected = ""
+    assert get_only_numbers(input_str) == expected
+
+def test_get_only_numbers_with_mixed_content():
+    """Test if a string with mixed content correctly extracts only numbers."""
+    input_str = "abc123def456ghi789"
+    expected = "123456789"
+    assert get_only_numbers(input_str) == expected
+
+def test_invalid_input_type_get_only_numbers():
+    """Test if TypeError is raised for non-string input."""
+    with pytest.raises(TypeError):
+        get_only_numbers(12345)
+    
+        
         
         
     
