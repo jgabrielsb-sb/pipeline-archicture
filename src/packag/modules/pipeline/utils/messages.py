@@ -113,6 +113,29 @@ class GetAllExtractedInfoErrorMessage:
         error_messages = '\n'.join([e.get_message() for e in self.exceptions])
         return f"Error on the following extracting methods:\n{error_messages}"
 
+class MissingColumnsErrorMessage:
+    def __init__(self, 
+                 function_name: str, 
+                 input_name: str,
+                 missing_columns: list[str],
+                 ):
+        for argument in [function_name, input_name]:
+            if not isinstance(argument, str):
+                raise ValueError("function_name and input_name must be strings")
         
+        if not isinstance(missing_columns, list):
+            raise ValueError("missing_columns must be a list")
+        
+        if not all(isinstance(column, str) for column in missing_columns):
+            raise ValueError("missing_columns must be a list of strings")
+        
+        
+        self.function_name = function_name
+        self.input_name = input_name
+        self.missing_columns = missing_columns
+        
+        
+    def get_message(self):
+        return f"MissingColumnsError on function {self.function_name}: The following columns are missing: {str(self.missing_columns)} on the input {self.input_name}"
         
         

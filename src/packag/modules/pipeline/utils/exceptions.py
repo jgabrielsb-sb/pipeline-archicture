@@ -98,4 +98,16 @@ class GetAllExtractedInfoError(Exception):
         super().__init__(message.get_message())
         
 
+class MissingColumnsError(Exception):
+    """
+    Raised when a column is missing in the input data.
+    """
+    def __init__(self, message: MissingColumnsErrorMessage):
+        self.message = message
+        
+        if not isinstance(message, MissingColumnsErrorMessage):
+            raise TypeError("message must be an instance of MissingColumnsErrorMessage")
+        
+        super().__init__(message.get_message())
+        
 
