@@ -1,5 +1,5 @@
 from .logger import get_logger
-from ..pipeline.utils.messages import (
+from .common_messages import (
     PipelineErrorMessage, 
     TaskErrorMessage, 
     OperationErrorMessage, 
