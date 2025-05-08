@@ -18,7 +18,7 @@ from pathlib import Path
 
 class TestFormatDataTask:
     #
-    def test_if_private_validate_operation_cls_raise_type_error_when_operation_cls_is_not_a_operation(self):
+    def test_if_private_validate_operation_cls_raise_type_error_when_operation_cls_is_not_an_operation(self):
         with pytest.raises(TypeError):
             FormatDataTask(operation_cls=None)._validate_operation_cls(operation_cls=None)
             
@@ -59,13 +59,10 @@ class TestFormatDataTask:
             'key2': 'value2'
         }
         
-        class MockPydanticBaseModel(MagicMock, BaseModel):
-            pass
-        
         output_data = dummy_dict
         assert FormatDataTask(operation_cls=None)._validate_output(output_data=output_data) == output_data
             
-    def test_if_private_validate_operation_cls_raise_type_error_when_operation_cls_is_not_a_subclass_of_operation(self):
+    def test_if_private_validate_operation_cls_raise_type_error_when_operation_cls_is_not_an_operation_instance(self):
         with pytest.raises(TypeError):
             operation = str
             FormatDataTask(operation_cls=operation)._validate_operation_cls(operation_cls=operation)
@@ -76,10 +73,10 @@ class TestFormatDataTask:
             def run(self, input_data=None):
                 return None
             
-        operation = MockOperation
+        operation = MockOperation()
         assert FormatDataTask(operation_cls=operation).validate_operation_cls(operation_cls=operation) == operation
             
-    def test_if_validate_operation_cls_raise_validation_error_when_operation_cls_is_not_a_subclass_of_operation(self):
+    def test_if_validate_operation_cls_raise_validation_error_when_operation_cls_is_not_an_operation_instance(self):
         with pytest.raises(ValidationError):
             FormatDataTask(operation_cls=None).validate_operation_cls(operation_cls=None)
     
