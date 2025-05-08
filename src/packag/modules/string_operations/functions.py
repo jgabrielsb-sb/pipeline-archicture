@@ -167,3 +167,66 @@ def safe_str(value: object | None) -> str | None:
     except (TypeError, ValueError):
         string_operation_logger.info(f"Could not convert to str")
         return None
+
+@log_execution(string_operation_logger)
+def remove_leading_zeros(text: str) -> str:
+    """
+    Remove leading zeros from a string.
+    
+    Args:
+        text (str): The input string to remove leading zeros from.
+        
+    Returns:
+        str: The input string without leading zeros. Returns empty string if input is empty.
+        
+    Raises:
+        TypeError: If the input is not a string.
+        
+    Examples:
+        >>> remove_leading_zeros('00000120')
+        '120'
+        >>> remove_leading_zeros('120')
+        '120'
+        >>> remove_leading_zeros('0101000001')
+        '101000001'
+        >>> remove_leading_zeros('')
+        ''
+    """
+    if not isinstance(text, str):
+        string_operation_logger.error(f"Input must be a string")
+        raise TypeError("Input must be a string")
+    
+    if not text:  # Handle empty string case
+        return ''
+    
+    return text.lstrip('0') or '0'  # Return '0' if string is all zeros
+
+@log_execution(string_operation_logger)
+def get_only_numbers(text: str) -> str:
+    """
+    Extract only numbers from a string, maintaining their original order.
+    
+    Args:
+        text (str): The input string to extract numbers from.
+        
+    Returns:
+        str: A string containing only the numbers from the input, in their original order.
+        
+    Raises:
+        TypeError: If the input is not a string.
+        
+    Examples:
+        >>> get_only_numbers('00000120')
+        '00000120'
+        >>> get_only_numbers('083.254.754-98')
+        '08325475498'
+        >>> get_only_numbers('R$120,00')
+        '12000'
+        >>> get_only_numbers('HEY JUDE LOOK AT ME: 120')
+        '120'
+    """
+    if not isinstance(text, str):
+        string_operation_logger.error(f"Input must be a string")
+        raise TypeError("Input must be a string")
+    
+    return ''.join(char for char in text if char.isdigit())
