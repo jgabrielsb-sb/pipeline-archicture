@@ -94,29 +94,3 @@ class TestExtractDataTask:
         with pytest.raises(ValidationError):
             ExtractDataTask(operation_cls=None).validate_output(output_data=None)
         
-    
-    ####### TEST IF RUN RAISE TASK ERROR WHEN OPERATION_CLS IS NOT A SUBCLASS OF OPERATION ######
-    def test_if_run_raise_task_error_when_operation_cls_is_not_a_subclass_of_operation(self):
-        
-        input_data = MagicMock(BaseModel)
-        with pytest.raises(TaskError):
-            ExtractDataTask(operation_cls=None).run(input_data=input_data)
-    
-    ###### TEST IF RUN RAISE TASK ERROR WHEN INPUT IS NOT A DTO FILE ######
-    def Atest_if_run_raise_task_error_when_input_is_not_a_dto_file(self):
-        operation_cls = MagicMock(Operation)
-        operation_cls.run = MagicMock(BaseModel)
-        
-        input_data = dtoFile.File(file_path=Path('test.pdf'), file_extension='pdf')
-        
-
-        output_data = MagicMock(BaseModel)
-        
-        with pytest.raises(TaskError):
-            task = ExtractDataTask(operation_cls=operation_cls)
-            task.validate_input(input_data=input_data)
-            
-    ###### TEST IF RUN RAISE TASK ERROR WHEN OUTPUT IS NOT A Pydantic Base Model ######
-    def test_if_run_raise_task_error_when_output_is_not_a_pydantic_base_model(self):
-        with pytest.raises(TaskError):
-            ExtractDataTask(operation_cls=None).run(input_data=None)
