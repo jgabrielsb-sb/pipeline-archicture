@@ -83,6 +83,21 @@ def test_if_get_all_extracted_info_error_is_created():
             )]
         )
     )
+    
+def test_if_missing_columns_error_raises_type_error_if_message_is_not_a_missing_columns_error_message():
+    with pytest.raises(TypeError):
+        MissingColumnsError(message='message')
+        
+def test_if_missing_columns_error_is_created():
+    missing_columns_error = MissingColumnsError(
+        message=MissingColumnsErrorMessage(
+            function_name='function_name',
+            input_name='input_name',
+            missing_columns=['column_1', 'column_2']
+        )
+    )
+        
+        
         
         
         

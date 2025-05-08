@@ -236,6 +236,51 @@ def test_if_get_all_extracted_info_error_message_returns_the_correct_message_wit
     assert normalized_result == normalized_expected_message
     
     
+###### TEST IF MISSING COLUMNS ERROR MESSAGE RETURNS THE CORRECT MESSAGE ######
+def test_if_missing_columns_error_message_returns_the_correct_message_when_input_data_is_not_provided():
+    missing_columns_error_message = MissingColumnsErrorMessage(
+        function_name='function_name',
+        input_name='input_name',
+        missing_columns=['column_1', 'column_2'],
+    )
+    
+    expected_message = f"MissingColumnsError on function function_name: The following columns are missing: ['column_1', 'column_2'] on the input input_name"
+        
+    message = missing_columns_error_message.get_message()
+        
+    normalized_expected_message = normalize_string(expected_message)
+    normalized_result = normalize_string(message)
+    
+    assert normalized_result == normalized_expected_message
 
-
-
+def test_if_missing_columns_error_message_raises_value_error_when_function_name_is_not_a_string():
+    with pytest.raises(ValueError):
+        MissingColumnsErrorMessage(
+            function_name=1,
+            input_name='input_name',
+            missing_columns=['column_1', 'column_2']
+        )
+        
+def test_if_missing_columns_error_message_raises_value_error_when_input_name_is_not_a_string():
+    with pytest.raises(ValueError):
+        MissingColumnsErrorMessage(
+            function_name='function_name',
+            input_name=1,
+            missing_columns=['column_1', 'column_2']
+        )
+        
+def test_if_missing_columns_error_message_raises_value_error_when_missing_columns_is_not_a_list():
+    with pytest.raises(ValueError):
+        MissingColumnsErrorMessage(
+            function_name='function_name',
+            input_name='input_name',
+            missing_columns=1
+        )
+        
+def test_if_missing_columns_error_message_raises_value_error_when_missing_columns_is_not_a_list_of_strings():
+    with pytest.raises(ValueError):
+        MissingColumnsErrorMessage(
+            function_name='function_name',
+            input_name='input_name',
+            missing_columns=[1]
+        )
