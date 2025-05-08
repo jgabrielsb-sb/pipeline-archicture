@@ -82,32 +82,32 @@ class TestNotaFormattedInfo(BasePydanticModelTest):
     
     def get_required_fields_info(self):
         REQUIRED_COLUMNS_INFO = {
-            'numero_nfs': int,
+            'numero_nfs': str,
             'codigo_autenticidade': str,
             
-            'data_competencia': date,
+            'data_competencia': str,
             
-            'valor_liquido': float,
-            'valor_total': float,
-            'valor_deducoes': float,
-            'valor_pis': float,
-            'valor_cofins': float,
-            'valor_inss': float,
-            'valor_irrf': float,
-            'valor_csll': float,
-            'valor_issqn': float,
-            'base_calculo': float,
-            'aliquota': float,
-            'issqn_a_reter': float,
+            'valor_liquido': str,
+            'valor_total': str,
+            'valor_deducoes': str,
+            'valor_pis': str,
+            'valor_cofins': str,
+            'valor_inss': str,
+            'valor_irrf': str,
+            'valor_csll': str,
+            'valor_issqn': str,
+            'base_calculo': str,
+            'aliquota': str,
+            'issqn_a_reter': str,
             
-            'estado': EstadoEnum,
+            'estado': str,
             
             'codigo_tributacao': str,
             'discriminacao_servico': str,
-            'opt_simples_nacional': int,
+            'opt_simples_nacional': str,
             'atv_economica': str,
             'atv_economica_normalized': str,
-            'municipio': MunicipioEnum
+            'municipio': str
         }
         
         return REQUIRED_COLUMNS_INFO
@@ -115,36 +115,36 @@ class TestNotaFormattedInfo(BasePydanticModelTest):
         OPTIONAL_COLUMNS_INFO = {
             'serie': str,   
             'nfse_substituida': str, 
-            'valor_outras_retencoes': float,
-            'data_emissao': date,
+            'valor_outras_retencoes': str,
+            'data_emissao': str,
         }
     
         return OPTIONAL_COLUMNS_INFO
     
     def build_valid_data_with_all_fields(self):
         return {
-            'numero_nfs': 1,
+            'numero_nfs': '1',
             'codigo_autenticidade': 'AAKS78901234',
-            'data_competencia': date(2021, 1, 1),
-            'valor_liquido': 100,
-            'valor_total': 100,
-            'valor_deducoes': 100,
-            'valor_pis': 100,
-            'valor_cofins': 100,
-            'valor_inss': 100,
-            'valor_irrf': 100,
-            'valor_csll': 100,
-            'valor_issqn': 100,
-            'base_calculo': 100,
-            'aliquota': 100,
-            'issqn_a_reter': 100,
-            'estado': EstadoEnum.AL,
+            'data_competencia': '2021-01-01',
+            'valor_liquido': '100',
+            'valor_total': '100',
+            'valor_deducoes': '100',
+            'valor_pis': '100',
+            'valor_cofins': '100',
+            'valor_inss': '100',
+            'valor_irrf': '100',
+            'valor_csll': '100',
+            'valor_issqn': '100',
+            'base_calculo': '100',
+            'aliquota': '100',
+            'issqn_a_reter': '100',
+            'estado': 'AL',
             'codigo_tributacao': '12345678901234',
             'discriminacao_servico': 'Teste',
-            'opt_simples_nacional': 1,
+            'opt_simples_nacional': '1',
             'atv_economica': '12.34567.8901.234',
             'atv_economica_normalized': '12345678901234',
-            'municipio': MunicipioEnum.MACEIO
+            'municipio': 'Maceió'
         }
     def test_create_element_that_the_fields_that_accept_only_numbers_are_not_numbers_raises_error(self):
         """
@@ -154,7 +154,9 @@ class TestNotaFormattedInfo(BasePydanticModelTest):
         self.validate()
         only_numbers_fields = [
             'codigo_tributacao',
-            'atv_economica_normalized'
+            'atv_economica_normalized',
+            'numero_nfs',
+            'opt_simples_nacional'
         ]
         
         valid_data_with_all_fields = self.build_valid_data_with_all_fields()
